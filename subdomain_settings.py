@@ -8,10 +8,8 @@ from MyApp.models import MyModel
 MODEL_TO_SUBDOMAIN = {
     'model' : MyModel,
     'filter_field' : 'slug', #will catch foo.mysite.com if foo can be matched to a slug of MyModel
+    'url_conf' : 'model_urls', #the url conf if a model is matched
 }
-
-#the url conf if a model is matched
-MODEL_SUBDOMAIN_URLCONF = 'model_urls'
 
 #these subdomains are checked before models
 SUBDOMAIN_URLCONFS = {

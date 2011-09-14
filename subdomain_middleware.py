@@ -1,4 +1,4 @@
-__author__ = 'Max Jaderberg'
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from subdomain_settings import *
 
@@ -20,12 +20,11 @@ class SubdomainMiddleware:
                 #try to find a subdomain in this list (not a model subdomain)
                 request.urlconf = SUBDOMAIN_URLCONFS[sub]
             except KeyError:
-                #try and find a model associated with this subdomain
-                model_set = MODEL_TO_SUBDOMAIN['model'].objects.filter(**{MODEL_TO_SUBDOMAIN['filter_field'] : sub})
-                if model_set:
-                    request.urlconf = MODEL_SUBDOMAIN_URLCONF
-                    request.subdomain_object = model_set[0]
-                else:
+                try:
+                    #try and find a model associated with this subdomain
+                    request.subdomain_object = MODEL_TO_SUBDOMAIN['model'].objects.get(**{MODEL_TO_SUBDOMAIN['filter_field'] : sub})
+                    request.urlconf = MODEL_TO_SUBDOMAIN['url_conf']
+                except ObjectDoesNotExist:
                     if REDIRECT_IF_NO_MODEL:
                         return HttpResponseRedirect(REDIRECT_IF_NO_MODEL)
                     else:
